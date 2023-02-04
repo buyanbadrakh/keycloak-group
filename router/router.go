@@ -29,7 +29,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Use(middleware.GetAccessToken)
 	// Middleware
 	// app.Use(middleware.Protected)
-	api := app.Group("/api", logger.New())
+	api := app.Group(config.Config.Application.BasePath, logger.New())
 
 	// Users
 	users := api.Group("/users")

@@ -36,7 +36,7 @@ type config struct {
 		Name        string `env:"APPLICATION_NAME"`
 		Environment string `env:"APPLICATION_ENVIRONMENT"`
 		Version     string `env:"APPLICATION_VERSION"`
-		APIv        string `env:"APPLICATION_API_VERSION"`
+		BasePath    string `env:"APPLICATION_BASE_PATH"`
 	}
 
 	// HTTPServer provides the HTTP server configuration.
