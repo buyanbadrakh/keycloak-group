@@ -1,4 +1,4 @@
-FROM golang:1.19.3 AS go_build
+FROM golang:1.16-alpine AS go_build
 
 # Linux packages required for build
 RUN apk add bash ca-certificates git gcc g++ libc-dev
@@ -9,12 +9,12 @@ WORKDIR /app/
 COPY . .
 
 # ENV variables
-ENV KEYCLOAK_PUBLIC_KEY=(Keycloak Realm RS256 Public Key)
-ENV KEYCLOAK_REALM=(Keycloak Realm)
-ENV KEYCLOAK_URL=https://sso.example.com (keycloak admin URL)
-ENV GRANT_TYPE=client_credentials
-ENV CLIENT_ID=(Keycloak Client ID: admin-cli)
-ENV CLIENT_SECRET=(Keycloak Client Secret)
+# ENV PUBLIC_KEY="(Keycloak Realm RS256 Public Key)"
+# ENV REALM="(Keycloak Realm)"
+# ENV URL="https://sso.example.com (keycloak admin URL)"
+# ENV GRANT_TYPE="client_credentials"
+# ENV CLIENT_ID="(Keycloak Client ID: admin-cli)"
+# ENV CLIENT_SECRET="(Keycloak Client Secret)"
 
 ENV APPLICATION_NAME=keycloak-api
 ENV APPLICATION_ENVIRONMENT=production
@@ -43,7 +43,7 @@ FROM go_build AS build
 COPY . .
 # Build bi project
 RUN go install
-RUN go build
+RUN go build -o keycloak-api
 
 # Stage 3: Build fresh container image without golang
 FROM alpine:3.7
