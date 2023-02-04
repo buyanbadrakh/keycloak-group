@@ -7,7 +7,7 @@ func CheckError(a *fiber.Agent) ([]byte, int, fiber.Map) {
 		return nil, fiber.StatusInternalServerError, fiber.Map{"code": fiber.StatusInternalServerError, "message": "parse error"}
 	}
 
-	code, body, errs := a.Bytes()
+	code, body, errs := a.InsecureSkipVerify().Bytes()
 
 	if code != fiber.StatusOK || len(errs) > 0 {
 		return nil, code, fiber.Map{"code": fiber.StatusInternalServerError, "message": "unknown_error"}
