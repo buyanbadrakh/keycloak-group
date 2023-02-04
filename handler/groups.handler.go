@@ -16,6 +16,7 @@ func GetGroups(c *fiber.Ctx) error {
 	token := c.Locals("token").(model.Token)
 
 	a := fiber.AcquireAgent()
+
 	req := a.Request()
 	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/groups?briefRepresentation=false", config.Config.Keycloak.URL, user.Realm))
 	req.Header.SetMethod(fiber.MethodGet)
@@ -39,7 +40,7 @@ func GetGroups(c *fiber.Ctx) error {
 			}
 		}
 	}
-	return c.JSON(response)
+	return c.JSON(fiber.Map{"code": "SUCCESS", "info": nil, "key": 0, "result": response})
 }
 func GetGroupMembers(c *fiber.Ctx) error {
 
@@ -49,6 +50,7 @@ func GetGroupMembers(c *fiber.Ctx) error {
 	token := c.Locals("token").(model.Token)
 
 	a := fiber.AcquireAgent()
+
 	req := a.Request()
 	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/groups/%s/members", config.Config.Keycloak.URL, user.Realm, id))
 	req.Header.SetMethod(fiber.MethodGet)
@@ -64,7 +66,8 @@ func GetGroupMembers(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"code": fiber.StatusInternalServerError, "message": "json unmarshal"})
 	}
 
-	return c.JSON(users)
+	// return c.JSON(users)
+	return c.JSON(fiber.Map{"code": "SUCCESS", "info": nil, "key": 0, "result": users})
 }
 
 func GroupCreate(c *fiber.Ctx) error {
@@ -73,6 +76,7 @@ func GroupCreate(c *fiber.Ctx) error {
 	token := c.Locals("token").(model.Token)
 
 	a := fiber.AcquireAgent()
+
 	req := a.Request()
 	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/groups", config.Config.Keycloak.URL, user.Realm))
 	req.Header.SetMethod(fiber.MethodPost)
@@ -85,7 +89,7 @@ func GroupCreate(c *fiber.Ctx) error {
 		return c.Status(code).JSON(res)
 	}
 
-	return c.JSON(fiber.Map{"code": code, "message": "created"})
+	return c.JSON(fiber.Map{"code": "SUCCESS", "message": "created"})
 }
 
 func GroupUpdate(c *fiber.Ctx) error {
@@ -96,6 +100,7 @@ func GroupUpdate(c *fiber.Ctx) error {
 	token := c.Locals("token").(model.Token)
 
 	a := fiber.AcquireAgent()
+
 	req := a.Request()
 	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/groups/%s", config.Config.Keycloak.URL, user.Realm, id))
 	req.Header.SetMethod(fiber.MethodPut)
@@ -106,7 +111,7 @@ func GroupUpdate(c *fiber.Ctx) error {
 		return c.Status(code).JSON(res)
 	}
 
-	return c.JSON(fiber.Map{"code": code, "message": "updated"})
+	return c.JSON(fiber.Map{"code": "SUCCESS", "message": "updated"})
 }
 
 func GroupDelete(c *fiber.Ctx) error {
@@ -117,6 +122,7 @@ func GroupDelete(c *fiber.Ctx) error {
 	token := c.Locals("token").(model.Token)
 
 	a := fiber.AcquireAgent()
+
 	req := a.Request()
 	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/groups/%s", config.Config.Keycloak.URL, user.Realm, id))
 	req.Header.SetMethod(fiber.MethodDelete)
@@ -127,5 +133,5 @@ func GroupDelete(c *fiber.Ctx) error {
 		return c.Status(code).JSON(res)
 	}
 
-	return c.JSON(fiber.Map{"code": code, "message": "deleted"})
+	return c.JSON(fiber.Map{"code": "SUCCESS", "message": "deleted"})
 }
