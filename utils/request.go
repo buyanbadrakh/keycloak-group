@@ -1,6 +1,12 @@
 package utils
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"encoding/json"
+
+	"github.com/gofiber/fiber/v2/log"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 func CheckError(a *fiber.Agent) ([]byte, int, fiber.Map) {
 	if err := a.Parse(); err != nil {
@@ -9,9 +15,15 @@ func CheckError(a *fiber.Agent) ([]byte, int, fiber.Map) {
 
 	code, body, errs := a.InsecureSkipVerify().Bytes()
 
-	if code != fiber.StatusOK || len(errs) > 0 {
+	log.Info(string(body))
+	if code >= fiber.StatusBadRequest || len(errs) > 0 {
+		if body != nil {
+			var b fiber.Map
+			json.Unmarshal(body, &b)
+			return nil, code, fiber.Map{"code": code, "message": b["error"]}
+		}
 		return nil, code, fiber.Map{"code": fiber.StatusInternalServerError, "message": "unknown_error"}
 	}
 
-	return body, 0, nil
+	return body, code, nil
 }

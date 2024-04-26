@@ -8,6 +8,7 @@ import (
 	"github.com/buyanbadrakh/keycloak-group/model"
 	"github.com/buyanbadrakh/keycloak-group/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 func GetGroups(c *fiber.Ctx) error {
@@ -79,13 +80,24 @@ func GroupCreate(c *fiber.Ctx) error {
 
 	req := a.Request()
 	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/groups", config.Config.Keycloak.URL, user.Realm))
+	req.Header.SetContentType("application/json")
 	req.Header.SetMethod(fiber.MethodPost)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
 
-	req.AppendBody(c.Body())
+	var group model.Group
+	json.Unmarshal(c.Body(), &group)
 
-	body, code, res := utils.CheckError(a)
-	if body == nil {
+	group.Attributes = model.GroupAttr{
+		Company: []string{user.Company},
+	}
+
+	b, _ := json.Marshal(group)
+
+	log.Info("GroupCreate [REQUEST]: ", string(b))
+	req.AppendBody(b)
+
+	_, code, res := utils.CheckError(a)
+	if code >= fiber.StatusBadRequest {
 		return c.Status(code).JSON(res)
 	}
 
@@ -103,11 +115,24 @@ func GroupUpdate(c *fiber.Ctx) error {
 
 	req := a.Request()
 	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/groups/%s", config.Config.Keycloak.URL, user.Realm, id))
+	// req.UseHostHeader = false
+	req.Header.SetContentType("application/json")
 	req.Header.SetMethod(fiber.MethodPut)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
 
-	body, code, res := utils.CheckError(a)
-	if body == nil {
+	var group model.Group
+	json.Unmarshal(c.Body(), &group)
+
+	group.ID = &id
+	group.Attributes = model.GroupAttr{
+		Company: []string{user.Company},
+	}
+
+	b, _ := json.Marshal(group)
+	log.Info("GroupUpdate [REQUEST]: ", string(b))
+	req.AppendBody(b)
+	_, code, res := utils.CheckError(a)
+	if code >= fiber.StatusBadRequest {
 		return c.Status(code).JSON(res)
 	}
 
@@ -128,8 +153,8 @@ func GroupDelete(c *fiber.Ctx) error {
 	req.Header.SetMethod(fiber.MethodDelete)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
 
-	body, code, res := utils.CheckError(a)
-	if body == nil {
+	_, code, res := utils.CheckError(a)
+	if code >= fiber.StatusBadRequest {
 		return c.Status(code).JSON(res)
 	}
 

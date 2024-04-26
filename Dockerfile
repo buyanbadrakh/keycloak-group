@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine AS go_build
+FROM golang:1.19-alpine AS go_build
 
 # Linux packages required for build
 RUN apk add bash ca-certificates git gcc g++ libc-dev
