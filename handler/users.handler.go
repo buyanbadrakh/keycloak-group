@@ -18,7 +18,7 @@ func GetUsers(c *fiber.Ctx) error {
 	a := fiber.AcquireAgent()
 
 	req := a.Request()
-	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/users", config.Config.Keycloak.URL, user.Realm))
+	req.SetRequestURI(fmt.Sprintf("%s/admin/realms/%s/users?first=0&max=500", config.Config.Keycloak.URL, user.Realm))
 	req.Header.SetMethod(fiber.MethodGet)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
 

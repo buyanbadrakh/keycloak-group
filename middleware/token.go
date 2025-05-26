@@ -44,7 +44,7 @@ func GetAccessToken(c *fiber.Ctx) error {
 
 		if err := json.Unmarshal(body, &token); err != nil {
 			return c.Status(code).
-				JSON(fiber.Map{"status": "error", "message": errs[0].Error()})
+				JSON(fiber.Map{"status": "error", "message": err.Error()})
 		}
 		c.Locals("token", token)
 		c.Next()
