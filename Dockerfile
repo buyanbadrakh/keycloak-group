@@ -49,7 +49,7 @@ RUN go build -o keycloak-api
 FROM alpine:3.7
 RUN apk add --no-cache tzdata ca-certificates
 WORKDIR /app/
-ENV TZ Asia/Ulaanbaatar
+ENV TZ=Asia/Ulaanbaatar
 
 COPY --from=build /app/ /app/
 
