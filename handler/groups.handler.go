@@ -50,6 +50,9 @@ func GetGroupMembers(c *fiber.Ctx) error {
 	user := c.Locals("user").(model.AccessModel)
 	token := c.Locals("token").(model.Token)
 
+	// b, _ := json.Marshal(user)
+	// log.Info("GetGroupMembers [REQUEST]: ", string(b))
+
 	a := fiber.AcquireAgent()
 
 	req := a.Request()
@@ -67,8 +70,22 @@ func GetGroupMembers(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"code": fiber.StatusInternalServerError, "message": "json unmarshal"})
 	}
 
+	var filteredUsers []model.User
+
+	for _, u := range users {
+		if u.Attributes == nil || u.Attributes.Company == nil {
+			continue // attributes эсвэл company байхгүй бол алгас
+		}
+		for _, c := range u.Attributes.Company {
+			if c == user.Company {
+				filteredUsers = append(filteredUsers, u)
+				break // company match болвол урагш алгас
+			}
+		}
+	}
+
 	// return c.JSON(users)
-	return c.JSON(fiber.Map{"code": "SUCCESS", "info": nil, "key": 0, "result": users})
+	return c.JSON(fiber.Map{"code": "SUCCESS", "info": nil, "key": 0, "result": filteredUsers})
 }
 
 func GroupCreate(c *fiber.Ctx) error {

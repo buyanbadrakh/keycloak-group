@@ -34,16 +34,16 @@ func JWTSuccess(c *fiber.Ctx) error {
 		if err := json.Unmarshal(jsonbody, &a); err != nil {
 			return err
 		}
+		if HasRole(a, "bi_admin") || HasRole(a, "bi_users") {
 
-		a.Realm = a.Iss[strings.LastIndex(a.Iss, "/")+1:]
+			a.Realm = a.Iss[strings.LastIndex(a.Iss, "/")+1:]
 
-		c.Locals("user", a)
-		c.Next()
-		return nil
-	} else {
-		return c.Status(fiber.StatusUnauthorized).
-			JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT"})
+			c.Locals("user", a)
+			return c.Next()
+		}
 	}
+	return c.Status(fiber.StatusUnauthorized).
+		JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT"})
 
 	// return c.Status(fiber.StatusUnauthorized).
 	// 	JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT"})

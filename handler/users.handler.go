@@ -34,6 +34,9 @@ func GetUsers(c *fiber.Ctx) error {
 
 	var response []model.User
 	for _, u := range users {
+		if u.Attributes == nil || u.Attributes.Company == nil {
+			continue // attributes эсвэл company байхгүй бол алгас
+		}
 		for _, c := range u.Attributes.Company {
 			if c == user.Company {
 				response = append(response, u)

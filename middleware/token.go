@@ -47,7 +47,6 @@ func GetAccessToken(c *fiber.Ctx) error {
 				JSON(fiber.Map{"status": "error", "message": err.Error()})
 		}
 		c.Locals("token", token)
-		c.Next()
-		return nil
+		return c.Next()
 	}
 }
