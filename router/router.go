@@ -37,7 +37,7 @@ func SetupRoutes(app *fiber.App) {
 	users.Put("/:id/groups/:groupId", handler.GroupAddMember)
 	users.Delete("/:id/groups/:groupId", handler.GroupDeleteMember)
 
-	// // Groups
+	// Groups
 	groups := api.Group("/groups")
 	groups.Get("/", handler.GetGroups)
 	groups.Get("/:id/members", handler.GetGroupMembers)
